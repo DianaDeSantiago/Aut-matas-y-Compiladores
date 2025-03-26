@@ -1,0 +1,42 @@
+%option noyywrap
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char cadCor[] = "Potter";
+char cadInc[] = "Poter";
+int contadorPot = 0;
+%}
+
+%%
+
+[a-zA-Z]+ {
+    if (strcmp(yytext, cadInc) == 0) {
+        fprintf(yyout, "%s", cadCor);
+        contadorPot++;
+    } else {
+        fprintf(yyout, "%s", yytext);
+    }
+}
+. { fprintf(yyout, "%s", yytext); }
+
+%%
+
+int main() {
+    yyin = fopen("El_Prisionero_de_Azkaban.txt", "r");
+    yyout = fopen("Potterresultado.txt", "w");
+    
+    if (!yyin || !yyout) {
+        perror("Error al abrir los archivos");
+        return 1;
+    }
+    
+    yylex();
+    
+    printf("Se corrigieron %d errores.\n", contadorPot);
+    
+    fclose(yyin);
+    fclose(yyout);
+    return 0;
+}
